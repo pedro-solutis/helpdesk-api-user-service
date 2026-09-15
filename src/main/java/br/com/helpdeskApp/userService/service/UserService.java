@@ -29,8 +29,9 @@ public class UserService {
         return users.map(UserListDTO::new);
     }
 
-    public void getUserById(Long id) {
-        // Implement logic to retrieve a user by ID here
+    public UserDetailsDTO getUserById(Long id) {
+        var user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        return new UserDetailsDTO(user);
     }
 
     public void updateUser(Long id, User user) {
