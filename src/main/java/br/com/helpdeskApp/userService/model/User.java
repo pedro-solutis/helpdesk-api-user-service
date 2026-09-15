@@ -30,7 +30,12 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private boolean active;
-    private LocalDateTime createdAt;
+    private boolean active = true;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
+    public User(UserRegistrationDTO user) {
+        this.name = user.name();
+        this.email = user.email();
+        this.role = user.role();
+    }
 }

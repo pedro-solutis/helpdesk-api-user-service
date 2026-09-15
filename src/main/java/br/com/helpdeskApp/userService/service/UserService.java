@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.helpdeskApp.userService.model.User;
+import br.com.helpdeskApp.userService.model.UserDetailsDTO;
+import br.com.helpdeskApp.userService.model.UserRegistrationDTO;
 import br.com.helpdeskApp.userService.repository.UserRepository;
 
 @Service 
@@ -12,8 +14,10 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public void createUser(User user) {
-        // Implement user creation logic here
+    public UserDetailsDTO createUser(UserRegistrationDTO user) {
+        var newUser = new User(user);
+        userRepository.save(newUser);
+        return new UserDetailsDTO(newUser);
     }
 
     public void getAllUsers() {
