@@ -12,12 +12,15 @@ public record UserRegistrationDTO(
         @Email(message = "Email must be valid")
         String email,
 
+        @NotBlank(message = "Password is required")
+        String password,
+
         @NotNull(message = "Role is required")
         Role role
 ) {
 
         public UserRegistrationDTO(User newUser) {
-                this(newUser.getName(), newUser.getEmail(), newUser.getRole());
+                this(newUser.getName(), newUser.getEmail(), newUser.getPassword(), newUser.getRole());
         }
 }
 
