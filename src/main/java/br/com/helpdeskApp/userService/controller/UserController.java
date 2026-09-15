@@ -10,12 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 import jakarta.validation.Valid;
-import br.com.helpdeskApp.userService.model.User;
 import br.com.helpdeskApp.userService.model.UserDetailsDTO;
 import br.com.helpdeskApp.userService.model.UserListDTO;
 import br.com.helpdeskApp.userService.model.UserRegistrationDTO;
@@ -49,8 +49,11 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    public void updateUser(Long id, User user) {
-       // Implement user update logic here
+    @PutMapping ("/{id}")
+    @Transactional 
+    public ResponseEntity<UserDetailsDTO> updateUser(@PathVariable Long id, @RequestBody @Valid UserRegistrationDTO user) {
+        var updatedUser = userService.updateUser(id, user);
+        return ResponseEntity.ok(updatedUser);
     }
 
     public void deleteUser(Long id) {

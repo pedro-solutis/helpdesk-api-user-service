@@ -34,8 +34,13 @@ public class UserService {
         return new UserDetailsDTO(user);
     }
 
-    public void updateUser(Long id, User user) {
-        // Implement user update logic here
+    public UserDetailsDTO updateUser(Long id, UserRegistrationDTO user) {
+        var existingUser = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        existingUser.setName(user.name());
+        existingUser.setEmail(user.email());
+        existingUser.setRole(user.role());
+        userRepository.save(existingUser);
+        return new UserDetailsDTO(existingUser);
     }
 
     public void deleteUser(Long id) {
