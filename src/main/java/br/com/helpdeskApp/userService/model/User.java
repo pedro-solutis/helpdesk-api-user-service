@@ -38,4 +38,8 @@ public class User {
         this.email = user.email();
         this.role = user.role();
     }
+
+    public void deactivate() {
+        this.active = false;
+    }
 }

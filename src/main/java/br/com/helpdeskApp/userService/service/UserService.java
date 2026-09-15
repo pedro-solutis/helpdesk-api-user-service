@@ -44,6 +44,8 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
-        // Implement user deletion logic here
+        var existingUser = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        existingUser.deactivate();
+        userRepository.save(existingUser);
     }
 }
