@@ -4,6 +4,7 @@ package br.com.helpdeskApp.userService.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.helpdeskApp.userService.model.User;
@@ -18,8 +19,12 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public UserDetailsDTO createUser(UserRegistrationDTO user) {
         var newUser = new User(user);
+        newUser.setPassword(passwordEncoder.encode(user.password()));
         userRepository.save(newUser);
         return new UserDetailsDTO(newUser);
     }

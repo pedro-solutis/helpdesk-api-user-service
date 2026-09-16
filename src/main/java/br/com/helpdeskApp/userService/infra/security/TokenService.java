@@ -15,7 +15,7 @@ import br.com.helpdeskApp.userService.model.User;
 @Service 
 public class TokenService {
 
-    @Value("${jwt.secret}")
+    @Value("${api.security.jwt.secret}")
     private String secret;
 
     private static final String ISSUER = "userService";

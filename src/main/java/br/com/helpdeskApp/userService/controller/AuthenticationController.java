@@ -12,7 +12,7 @@ import br.com.helpdeskApp.userService.infra.security.TokenDataDTO;
 import br.com.helpdeskApp.userService.infra.security.TokenService;
 import br.com.helpdeskApp.userService.model.User;
 import br.com.helpdeskApp.userService.model.UserLoginDTO;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
 
 @RestController 
