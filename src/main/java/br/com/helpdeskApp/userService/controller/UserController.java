@@ -21,10 +21,12 @@ import br.com.helpdeskApp.userService.model.UserDetailsDTO;
 import br.com.helpdeskApp.userService.model.UserListDTO;
 import br.com.helpdeskApp.userService.model.UserRegistrationDTO;
 import br.com.helpdeskApp.userService.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 
 @RestController 
 @RequestMapping ("/users")
+@SecurityRequirement(name = "bearer-key")
 public class UserController {
 
     @Autowired
