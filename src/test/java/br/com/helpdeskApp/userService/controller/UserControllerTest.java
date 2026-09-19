@@ -66,7 +66,6 @@ class UserControllerTest {
     @Test
     @DisplayName("Deve retornar 400 (Bad Request) ao tentar criar um usuário com dados inválidos")
     void testCreateUser_Failure_InvalidData() throws Exception {
-        // Nome vazio, email inválido e senha vazia
         var registrationDTO = new UserRegistrationDTO("", "email-invalido", "", Role.ADMIN);
 
         mockMvc.perform(post("/users")
@@ -176,5 +175,43 @@ class UserControllerTest {
 
         mockMvc.perform(delete("/users/1"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 409 (Conflict) ao criar usuário com email já existente")
+    void testCreateUser_Failure_DataConflict() throws Exception {
+        var registrationDTO = new UserRegistrationDTO("Pedro", "pedro@email.com", "senha123", Role.ADMIN);
+
+        Mockito.when(userService.createUser(any(UserRegistrationDTO.class)))
+                .thenThrow(new br.com.helpdeskApp.userService.infra.exception.DataConflictException("This email is already registered"));
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userResgistrationDTO.write(registrationDTO).getJson()))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 400 (Bad Request) ao atualizar usuário inativo")
+    void testUpdateUser_Failure_InactiveUser() throws Exception {
+        var updateDTO = new UserUpdateDTO("Pedro Atualizado", "senha123", "ADMIN");
+
+        Mockito.when(userService.updateUser(eq(1L), any(UserUpdateDTO.class)))
+                .thenThrow(new br.com.helpdeskApp.userService.infra.exception.InactiveUserException("The operation cannot be completed: The user is inactive."));
+
+        mockMvc.perform(put("/users/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userUpdateDTO.write(updateDTO).getJson()))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 400 (Bad Request) ao deletar usuário inativo")
+    void testDeleteUser_Failure_InactiveUser() throws Exception {
+        Mockito.doThrow(new br.com.helpdeskApp.userService.infra.exception.InactiveUserException("The operation cannot be completed: The user is inactive."))
+                .when(userService).deleteUser(1L);
+
+        mockMvc.perform(delete("/users/1"))
+                .andExpect(status().isBadRequest());
     }
 }
