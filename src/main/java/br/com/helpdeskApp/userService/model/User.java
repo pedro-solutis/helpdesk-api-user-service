@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLRestriction;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import br.com.helpdeskApp.userService.dto.UserRegistrationDTO;
 import br.com.helpdeskApp.userService.dto.UserUpdateDTO;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -36,15 +38,26 @@ public class User implements UserDetails {
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column (name = "name", nullable = false)
     private String name;
+
+    @Column (name = "email", nullable = false, unique = true, updatable = false)
     private String email;
+
+    @Column (name = "password", nullable = false)
     private String password;
 
+    @Column (name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column (name = "active", nullable = false, columnDefinition = "DEFAULT TRUE")
     private boolean active = true;
-    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column (name = "created_at", nullable = false)
+    @CreationTimestamp 
+    private LocalDateTime createdAt;
 
     public User(UserRegistrationDTO user, PasswordEncoder encoder) {
         this.name = user.name();
