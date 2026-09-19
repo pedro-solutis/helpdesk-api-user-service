@@ -8,10 +8,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.helpdeskApp.userService.model.User;
-import br.com.helpdeskApp.userService.model.UserDetailsDTO;
-import br.com.helpdeskApp.userService.model.UserListDTO;
-import br.com.helpdeskApp.userService.model.UserRegistrationDTO;
+import br.com.helpdeskApp.userService.dto.UserDetailsDTO;
+import br.com.helpdeskApp.userService.dto.UserListDTO;
+import br.com.helpdeskApp.userService.dto.UserRegistrationDTO;
 import br.com.helpdeskApp.userService.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service 
 public class UserService {
@@ -35,12 +36,12 @@ public class UserService {
     }
 
     public UserDetailsDTO getUserById(Long id) {
-        var user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        var user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
         return new UserDetailsDTO(user);
     }
 
     public UserDetailsDTO updateUser(Long id, UserRegistrationDTO user) {
-        var existingUser = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        var existingUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
         existingUser.setName(user.name());
         existingUser.setEmail(user.email());
         existingUser.setRole(user.role());
@@ -49,7 +50,7 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
-        var existingUser = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        var existingUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
         existingUser.deactivate();
         userRepository.save(existingUser);
     }

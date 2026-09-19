@@ -1,9 +1,9 @@
 package br.com.helpdeskApp.userService.controller;
 
 import br.com.helpdeskApp.userService.model.Role;
-import br.com.helpdeskApp.userService.model.UserDetailsDTO;
-import br.com.helpdeskApp.userService.model.UserListDTO;
-import br.com.helpdeskApp.userService.model.UserRegistrationDTO;
+import br.com.helpdeskApp.userService.dto.UserDetailsDTO;
+import br.com.helpdeskApp.userService.dto.UserListDTO;
+import br.com.helpdeskApp.userService.dto.UserRegistrationDTO;
 import br.com.helpdeskApp.userService.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

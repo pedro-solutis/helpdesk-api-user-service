@@ -1,6 +1,9 @@
-package br.com.helpdeskApp.userService.model;
+package br.com.helpdeskApp.userService.dto;
 
 import java.time.LocalDateTime;
+
+import br.com.helpdeskApp.userService.model.Role;
+import br.com.helpdeskApp.userService.model.User;
 
 public record UserDetailsDTO(
         Long id,
