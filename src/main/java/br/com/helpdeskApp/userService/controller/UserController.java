@@ -20,6 +20,7 @@ import jakarta.validation.Valid;
 import br.com.helpdeskApp.userService.dto.UserDetailsDTO;
 import br.com.helpdeskApp.userService.dto.UserListDTO;
 import br.com.helpdeskApp.userService.dto.UserRegistrationDTO;
+import br.com.helpdeskApp.userService.dto.UserUpdateDTO;
 import br.com.helpdeskApp.userService.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
@@ -54,7 +55,7 @@ public class UserController {
 
     @PutMapping ("/{id}")
     @Transactional 
-    public ResponseEntity<UserDetailsDTO> updateUser(@PathVariable Long id, @RequestBody @Valid UserRegistrationDTO user) {
+    public ResponseEntity<UserDetailsDTO> updateUser(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO user) {
         var updatedUser = userService.updateUser(id, user);
         return ResponseEntity.ok(updatedUser);
     }

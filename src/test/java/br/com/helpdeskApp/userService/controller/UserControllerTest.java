@@ -4,6 +4,7 @@ import br.com.helpdeskApp.userService.model.Role;
 import br.com.helpdeskApp.userService.dto.UserDetailsDTO;
 import br.com.helpdeskApp.userService.dto.UserListDTO;
 import br.com.helpdeskApp.userService.dto.UserRegistrationDTO;
+import br.com.helpdeskApp.userService.dto.UserUpdateDTO;
 import br.com.helpdeskApp.userService.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -104,7 +105,7 @@ class UserControllerTest {
         var registrationDTO = new UserRegistrationDTO("Pedro Atualizado", "pedro@email.com", "senha123", Role.ADMIN);
         var detailsDTO = new UserDetailsDTO(1L, "Pedro Atualizado", "pedro@email.com", Role.ADMIN, true, LocalDateTime.now());
 
-        Mockito.when(userService.updateUser(eq(1L), any(UserRegistrationDTO.class))).thenReturn(detailsDTO);
+        Mockito.when(userService.updateUser(eq(1L), any(UserUpdateDTO.class))).thenReturn(detailsDTO);
 
         mockMvc.perform(put("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -156,7 +157,7 @@ class UserControllerTest {
     void testUpdateUser_Failure_NotFound() throws Exception {
         var registrationDTO = new UserRegistrationDTO("Pedro", "pedro@email.com", "senha123", Role.ADMIN);
 
-        Mockito.when(userService.updateUser(eq(1L), any(UserRegistrationDTO.class)))
+        Mockito.when(userService.updateUser(eq(1L), any(UserUpdateDTO.class)))
                 .thenThrow(new jakarta.persistence.EntityNotFoundException());
 
         mockMvc.perform(put("/users/1")

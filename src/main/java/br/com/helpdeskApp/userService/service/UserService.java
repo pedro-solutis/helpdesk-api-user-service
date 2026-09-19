@@ -11,6 +11,9 @@ import br.com.helpdeskApp.userService.model.User;
 import br.com.helpdeskApp.userService.dto.UserDetailsDTO;
 import br.com.helpdeskApp.userService.dto.UserListDTO;
 import br.com.helpdeskApp.userService.dto.UserRegistrationDTO;
+import br.com.helpdeskApp.userService.dto.UserUpdateDTO;
+import br.com.helpdeskApp.userService.infra.exception.DataConflictException;
+import br.com.helpdeskApp.userService.infra.exception.InactiveUserException;
 import br.com.helpdeskApp.userService.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -24,8 +27,9 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     public UserDetailsDTO createUser(UserRegistrationDTO user) {
-        var newUser = new User(user);
-        newUser.setPassword(passwordEncoder.encode(user.password()));
+        if (userRepository.existsByEmail(user.email()))
+            throw new DataConflictException("This email is already registered");
+        var newUser = new User(user, passwordEncoder);
         userRepository.save(newUser);
         return new UserDetailsDTO(newUser);
     }
@@ -40,17 +44,21 @@ public class UserService {
         return new UserDetailsDTO(user);
     }
 
-    public UserDetailsDTO updateUser(Long id, UserRegistrationDTO user) {
+    public UserDetailsDTO updateUser(Long id, UserUpdateDTO user) {
         var existingUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
-        existingUser.setName(user.name());
-        existingUser.setEmail(user.email());
-        existingUser.setRole(user.role());
+        if (!existingUser.isActive()) {
+            throw new InactiveUserException("The operation cannot be completed: The user is inactive.");
+        }        
+        existingUser.updateUser(user, passwordEncoder);
         userRepository.save(existingUser);
         return new UserDetailsDTO(existingUser);
     }
 
     public void deleteUser(Long id) {
         var existingUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        if(!existingUser.isActive()){
+            throw new InactiveUserException("The operation cannot be completed: The user is inactive.");
+        }
         existingUser.deactivate();
         userRepository.save(existingUser);
     }
