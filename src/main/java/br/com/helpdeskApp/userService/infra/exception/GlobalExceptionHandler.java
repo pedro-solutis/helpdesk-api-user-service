@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -102,6 +103,58 @@ public class GlobalExceptionHandler {
             null
         );
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<StandardError> handleIllegalStateException(IllegalStateException ex, HttpServletRequest request){
+        StandardError error = new StandardError(
+            LocalDateTime.now(),
+            HttpStatus.BAD_REQUEST.value(),
+            "Illegal State",
+            ex.getMessage(),
+            request.getRequestURI(),
+            null
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(InactiveUserException.class)
+    public ResponseEntity<StandardError> handleInactiveUserException(InactiveUserException ex, HttpServletRequest request){
+        StandardError error = new StandardError(
+            LocalDateTime.now(),
+            HttpStatus.BAD_REQUEST.value(),
+            "Inactive User",
+            ex.getMessage(),
+            request.getRequestURI(),
+            null
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<StandardError> handleDataIntegrityViolationException (DataIntegrityViolationException ex, HttpServletRequest request){
+        StandardError error = new StandardError(
+            LocalDateTime.now(),
+            HttpStatus.CONFLICT.value(),
+            "Data Integrity Violation",
+            ex.getMessage(),
+            request.getRequestURI(),
+            null
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(DataConflictException.class)
+    public ResponseEntity<StandardError> handleDataConflictException (DataConflictException ex, HttpServletRequest request){
+        StandardError error = new StandardError(
+            LocalDateTime.now(),
+            HttpStatus.CONFLICT.value(),
+            "Data Conflict",
+            ex.getMessage(),
+            request.getRequestURI(),
+            null
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
     @ExceptionHandler(Exception.class)
