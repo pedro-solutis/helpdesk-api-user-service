@@ -42,6 +42,9 @@ class UserControllerTest {
     @Autowired 
     private JacksonTester<UserRegistrationDTO> userResgistrationDTO;
 
+    @Autowired 
+    private JacksonTester<UserUpdateDTO> userUpdateDTO;
+
     @Test
     @DisplayName("Deve retornar 201 (Created) ao criar um usuário válido")
     void testCreateUser_Success() throws Exception {
@@ -102,14 +105,14 @@ class UserControllerTest {
     @Test
     @DisplayName("Deve retornar 200 (OK) ao atualizar um usuário com dados válidos")
     void testUpdateUser_Success() throws Exception {
-        var registrationDTO = new UserRegistrationDTO("Pedro Atualizado", "pedro@email.com", "senha123", Role.ADMIN);
+        var updateDTO = new UserUpdateDTO("Pedro Atualizado", "senha123", "ADMIN");
         var detailsDTO = new UserDetailsDTO(1L, "Pedro Atualizado", "pedro@email.com", Role.ADMIN, true, LocalDateTime.now());
 
         Mockito.when(userService.updateUser(eq(1L), any(UserUpdateDTO.class))).thenReturn(detailsDTO);
 
         mockMvc.perform(put("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(userResgistrationDTO.write(registrationDTO).getJson()))
+                        .content(userUpdateDTO.write(updateDTO).getJson()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Pedro Atualizado"));
     }
@@ -117,11 +120,11 @@ class UserControllerTest {
     @Test
     @DisplayName("Deve retornar 400 (Bad Request) ao atualizar um usuário com dados inválidos")
     void testUpdateUser_Failure_InvalidData() throws Exception {
-        var registrationDTO = new UserRegistrationDTO("", "email-invalido", "", Role.ADMIN);
+        var updateDTO = new UserUpdateDTO("", "", "ADMIN");
 
         mockMvc.perform(put("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(userResgistrationDTO.write(registrationDTO).getJson()))
+                        .content(userUpdateDTO.write(updateDTO).getJson()))
                 .andExpect(status().isBadRequest());
     }
 
