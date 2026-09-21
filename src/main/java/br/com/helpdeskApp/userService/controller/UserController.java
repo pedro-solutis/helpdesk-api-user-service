@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +34,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @PreAuthorize (value = "hasRole('ADMIN')")
     @PostMapping 
     @Transactional 
     public ResponseEntity<UserDetailsDTO> createUser(@RequestBody @Valid UserRegistrationDTO user, UriComponentsBuilder uriBuilder) {
@@ -41,6 +43,7 @@ public class UserController {
         return ResponseEntity.created(uri).body(createdUser);
     }
 
+    @PreAuthorize (value = "hasRole('ADMIN')")
     @GetMapping 
     public ResponseEntity<Page<UserListDTO>> getAllUsers(@PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable) {
         var users = userService.getAllUsers(pageable);
@@ -53,6 +56,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @PreAuthorize (value = "hasRole('ADMIN')")
     @PutMapping ("/{id}")
     @Transactional 
     public ResponseEntity<UserDetailsDTO> updateUser(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO user) {
@@ -60,6 +64,7 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
+    @PreAuthorize (value = "hasRole('ADMIN')")
     @DeleteMapping ("/{id}")
     @Transactional 
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
