@@ -26,7 +26,7 @@ import br.com.helpdeskApp.userService.infra.security.TokenService;
 import br.com.helpdeskApp.userService.model.User;
 
 @SpringBootTest 
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
 @AutoConfigureJsonTesters 
 class AuthenticationControllerTest {
 
@@ -43,11 +43,10 @@ class AuthenticationControllerTest {
     private JacksonTester<UserLoginDTO> userLoginDTO;
 
     @Test
-    @DisplayName("Deve retornar 200 (OK) e o token JWT ao autenticar com credenciais válidas")
+    @DisplayName("Should return 200 (OK) and the JWT token when authenticating with valid credentials")
     void testAuthenticate_Success() throws Exception {
         var loginDTO = new UserLoginDTO("pedro@email.com", "senha123");
         
-        // Mocking the authenticated user
         User mockUser = new User();
         Authentication auth = Mockito.mock(Authentication.class);
         Mockito.when(auth.getPrincipal()).thenReturn(mockUser);
@@ -63,7 +62,7 @@ class AuthenticationControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 401 (Unauthorized) ao enviar credenciais incorretas (BadCredentialsException)")
+    @DisplayName("Should return 401 (Unauthorized) when sending incorrect credentials (BadCredentialsException)")
     void testAuthenticate_Failure_BadCredentials() throws Exception {
         var loginDTO = new UserLoginDTO("pedro@email.com", "senha-errada");
 
@@ -78,9 +77,8 @@ class AuthenticationControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 400 (Bad Request) ao enviar dados inválidos")
+    @DisplayName("Should return 400 (Bad Request) when sending invalid data")
     void testAuthenticate_Failure_InvalidData() throws Exception {
-        // Envia email inválido e senha em branco para falhar na validação do DTO
         var loginDTO = new UserLoginDTO("email-invalido", "");
 
         mockMvc.perform(post("/login")
@@ -89,4 +87,3 @@ class AuthenticationControllerTest {
                 .andExpect(status().isBadRequest());
     }
 }
-

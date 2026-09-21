@@ -17,6 +17,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -29,7 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest 
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
 @AutoConfigureJsonTesters 
 class UserControllerTest {
 
@@ -46,7 +47,8 @@ class UserControllerTest {
     private JacksonTester<UserUpdateDTO> userUpdateDTO;
 
     @Test
-    @DisplayName("Deve retornar 201 (Created) ao criar um usuário válido")
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("Should return 201 (Created) when creating a valid user")
     void testCreateUser_Success() throws Exception {
         var registrationDTO = new UserRegistrationDTO("Pedro", "pedro@email.com", "senha123", Role.ADMIN);
         var detailsDTO = new UserDetailsDTO(1L, "Pedro", "pedro@email.com", Role.ADMIN, true, LocalDateTime.now());
@@ -64,7 +66,8 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 400 (Bad Request) ao tentar criar um usuário com dados inválidos")
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("Should return 400 (Bad Request) when creating a user with invalid data")
     void testCreateUser_Failure_InvalidData() throws Exception {
         var registrationDTO = new UserRegistrationDTO("", "email-invalido", "", Role.ADMIN);
 
@@ -75,7 +78,20 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 200 (OK) e a lista paginada de usuários")
+    @WithMockUser(roles = "CLIENT")
+    @DisplayName("Should return 403 (Forbidden) when a non-admin tries to create a user")
+    void testCreateUser_Forbidden() throws Exception {
+        var registrationDTO = new UserRegistrationDTO("Pedro", "pedro@email.com", "senha123", Role.ADMIN);
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userResgistrationDTO.write(registrationDTO).getJson()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("Should return 200 (OK) and a paginated list of users")
     void testGetAllUsers_Success() throws Exception {
         var userListDTO = new UserListDTO(1L, "Pedro", "pedro@email.com", Role.ADMIN);
         Page<UserListDTO> page = new PageImpl<>(List.of(userListDTO));
@@ -89,7 +105,16 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 200 (OK) ao buscar um usuário pelo ID")
+    @WithMockUser(roles = "CLIENT")
+    @DisplayName("Should return 403 (Forbidden) when a non-admin tries to get all users")
+    void testGetAllUsers_Forbidden() throws Exception {
+        mockMvc.perform(get("/users"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Should return 200 (OK) when getting a user by ID")
     void testGetUserById_Success() throws Exception {
         var detailsDTO = new UserDetailsDTO(1L, "Pedro", "pedro@email.com", Role.ADMIN, true, LocalDateTime.now());
 
@@ -102,7 +127,8 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 200 (OK) ao atualizar um usuário com dados válidos")
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("Should return 200 (OK) when updating a user with valid data")
     void testUpdateUser_Success() throws Exception {
         var updateDTO = new UserUpdateDTO("Pedro Atualizado", "senha123", "ADMIN");
         var detailsDTO = new UserDetailsDTO(1L, "Pedro Atualizado", "pedro@email.com", Role.ADMIN, true, LocalDateTime.now());
@@ -117,7 +143,8 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 400 (Bad Request) ao atualizar um usuário com dados inválidos")
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("Should return 400 (Bad Request) when updating a user with invalid data")
     void testUpdateUser_Failure_InvalidData() throws Exception {
         var updateDTO = new UserUpdateDTO("", "", "ADMIN");
 
@@ -128,7 +155,20 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 204 (No Content) ao deletar (desativar) um usuário")
+    @WithMockUser(roles = "CLIENT")
+    @DisplayName("Should return 403 (Forbidden) when a non-admin tries to update a user")
+    void testUpdateUser_Forbidden() throws Exception {
+        var updateDTO = new UserUpdateDTO("Pedro Atualizado", "senha123", "ADMIN");
+
+        mockMvc.perform(put("/users/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userUpdateDTO.write(updateDTO).getJson()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("Should return 204 (No Content) when deleting (deactivating) a user")
     void testDeleteUser_Success() throws Exception {
         mockMvc.perform(delete("/users/1"))
                 .andExpect(status().isNoContent());
@@ -137,7 +177,16 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 404 (Not Found) ao buscar todos os usuários (simulando falha no banco)")
+    @WithMockUser(roles = "CLIENT")
+    @DisplayName("Should return 403 (Forbidden) when a non-admin tries to delete a user")
+    void testDeleteUser_Forbidden() throws Exception {
+        mockMvc.perform(delete("/users/1"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("Should return 404 (Not Found) when getting all users (simulating db failure)")
     void testGetAllUsers_Failure_NotFound() throws Exception {
         Mockito.when(userService.getAllUsers(any())).thenThrow(new jakarta.persistence.EntityNotFoundException());
 
@@ -146,7 +195,8 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 404 (Not Found) ao buscar usuário por ID inexistente")
+    @WithMockUser
+    @DisplayName("Should return 404 (Not Found) when getting a user by non-existent ID")
     void testGetUserById_Failure_NotFound() throws Exception {
         Mockito.when(userService.getUserById(1L)).thenThrow(new jakarta.persistence.EntityNotFoundException());
 
@@ -155,7 +205,8 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 404 (Not Found) ao atualizar usuário com ID inexistente")
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("Should return 404 (Not Found) when updating a user with non-existent ID")
     void testUpdateUser_Failure_NotFound() throws Exception {
         var registrationDTO = new UserRegistrationDTO("Pedro", "pedro@email.com", "senha123", Role.ADMIN);
 
@@ -169,7 +220,8 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 404 (Not Found) ao deletar usuário com ID inexistente")
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("Should return 404 (Not Found) when deleting a user with non-existent ID")
     void testDeleteUser_Failure_NotFound() throws Exception {
         Mockito.doThrow(new jakarta.persistence.EntityNotFoundException()).when(userService).deleteUser(1L);
 
@@ -178,7 +230,8 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 409 (Conflict) ao criar usuário com email já existente")
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("Should return 409 (Conflict) when creating a user with an already registered email")
     void testCreateUser_Failure_DataConflict() throws Exception {
         var registrationDTO = new UserRegistrationDTO("Pedro", "pedro@email.com", "senha123", Role.ADMIN);
 
@@ -192,7 +245,8 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 400 (Bad Request) ao atualizar usuário inativo")
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("Should return 400 (Bad Request) when updating an inactive user")
     void testUpdateUser_Failure_InactiveUser() throws Exception {
         var updateDTO = new UserUpdateDTO("Pedro Atualizado", "senha123", "ADMIN");
 
@@ -206,7 +260,8 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 400 (Bad Request) ao deletar usuário inativo")
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("Should return 400 (Bad Request) when deleting an inactive user")
     void testDeleteUser_Failure_InactiveUser() throws Exception {
         Mockito.doThrow(new br.com.helpdeskApp.userService.infra.exception.InactiveUserException("The operation cannot be completed: The user is inactive."))
                 .when(userService).deleteUser(1L);
