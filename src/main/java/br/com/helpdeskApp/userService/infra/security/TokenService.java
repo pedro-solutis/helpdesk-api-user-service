@@ -15,10 +15,11 @@ import br.com.helpdeskApp.userService.model.User;
 @Service 
 public class TokenService {
 
-    @Value("${api.security.jwt.secret}")
+    @Value("${api.security.token.secret}")
     private String secret;
 
-    private static final String ISSUER = "userService";
+    @Value("${api.security.token.issuer}")
+    private String ISSUER;
 
     public String generateToken(User user) {
         try{
