@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.servers.Server;
 
-@OpenAPIDefinition(servers = { @Server(url = "http://localhost:8080/api"), @Server(url = "http://localhost:8081") })
+@OpenAPIDefinition(servers = { @Server(url = "${GATEWAY_URL:http://localhost:8080/api}", description = "Gateway API"), @Server(url = "${LOCAL_URL:http://localhost:8081}", description = "Local Server") })
 @SpringBootApplication
 public class UserServiceApplication {
 
