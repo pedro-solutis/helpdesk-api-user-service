@@ -26,7 +26,7 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("Deve inicializar a entidade User corretamente através do construtor")
+    @DisplayName("Should initialize User entity correctly through constructor")
     void testUserCreation() {
         var registrationDTO = new UserRegistrationDTO("Pedro", "pedro@email.com", "senha123", Role.CLIENT);
         
@@ -40,7 +40,7 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("Deve atualizar os dados do usuário quando novos valores são fornecidos")
+    @DisplayName("Should update user data when new values are provided")
     void testUpdateUser_AllFields() {
         var registrationDTO = new UserRegistrationDTO("Pedro", "pedro@email.com", "senha123", Role.CLIENT);
         User user = new User(registrationDTO, passwordEncoder);
@@ -56,7 +56,7 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("Não deve atualizar os dados do usuário se campos nulos forem enviados")
+    @DisplayName("Should not update user data if null fields are sent")
     void testUpdateUser_IgnoreNullFields() {
         var registrationDTO = new UserRegistrationDTO("Pedro", "pedro@email.com", "senha123", Role.CLIENT);
         User user = new User(registrationDTO, passwordEncoder);
@@ -71,7 +71,7 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("Deve desativar o usuário corretamente")
+    @DisplayName("Should deactivate user correctly")
     void testDeactivate() {
         var registrationDTO = new UserRegistrationDTO("Pedro", "pedro@email.com", "senha123", Role.CLIENT);
         User user = new User(registrationDTO, passwordEncoder);
@@ -84,7 +84,7 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("Deve retornar as authorities corretamente com base na Role")
+    @DisplayName("Should return authorities correctly based on Role")
     void testGetAuthorities() {
         var registrationDTO = new UserRegistrationDTO("Pedro", "pedro@email.com", "senha123", Role.TECHNICIAN);
         User user = new User(registrationDTO, passwordEncoder);

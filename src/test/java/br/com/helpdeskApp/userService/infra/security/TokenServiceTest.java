@@ -25,7 +25,7 @@ class TokenServiceTest {
     }
 
     @Test
-    @DisplayName("Deve gerar um token válido para um usuário")
+    @DisplayName("Should generate a valid token for a user")
     void testGenerateToken_Success() {
         User user = mock(User.class);
         when(user.getEmail()).thenReturn("pedro@email.com");
@@ -39,7 +39,7 @@ class TokenServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar RuntimeException ao falhar na geração do token (ex: secret nulo)")
+    @DisplayName("Should throw RuntimeException when token generation fails (e.g. null secret)")
     void testGenerateToken_Failure() {
         ReflectionTestUtils.setField(tokenService, "secret", null);
 
@@ -50,7 +50,7 @@ class TokenServiceTest {
     }
 
     @Test
-    @DisplayName("Deve recuperar o subject (email) de um token válido")
+    @DisplayName("Should recover subject (email) from a valid token")
     void testGetSubject_Success() {
         User user = mock(User.class);
         when(user.getEmail()).thenReturn("pedro@email.com");
@@ -65,7 +65,7 @@ class TokenServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar RuntimeException ao tentar extrair subject de um token inválido")
+    @DisplayName("Should throw RuntimeException when trying to extract subject from invalid token")
     void testGetSubject_Failure_InvalidToken() {
         String invalidToken = "isso.nao.e-um-token-valido";
 

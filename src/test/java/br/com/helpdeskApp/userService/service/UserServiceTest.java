@@ -44,7 +44,7 @@ class UserServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @Test
-    @DisplayName("Deve criar um usuário com sucesso quando o e-mail não estiver em uso")
+    @DisplayName("Should create a user with success if email is not in use")
     void testCreateUser_Success() {
         var registrationDTO = new UserRegistrationDTO("Pedro", "pedro@email.com", "senha123", Role.ADMIN);
         
@@ -63,7 +63,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar DataConflictException ao criar usuário com e-mail já existente")
+    @DisplayName("Should throw DataConflictException when try to create an user with an email in use")
     void testCreateUser_Failure_EmailConflict() {
         var registrationDTO = new UserRegistrationDTO("Pedro", "pedro@email.com", "senha123", Role.ADMIN);
         
@@ -76,7 +76,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Deve retornar uma página de usuários ativos")
+    @DisplayName("Should return all active user")
     void testGetAllUsers_Success() {
         User user = new User(new UserRegistrationDTO("Pedro", "pedro@email.com", "senha", Role.ADMIN), passwordEncoder);
         Page<User> page = new PageImpl<>(List.of(user));
@@ -93,7 +93,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Deve retornar o usuário por ID quando encontrado")
+    @DisplayName("Should return the user by Id with success")
     void testGetUserById_Success() {
         User user = new User(new UserRegistrationDTO("Pedro", "pedro@email.com", "senha", Role.ADMIN), passwordEncoder);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -106,7 +106,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar EntityNotFoundException ao buscar usuário com ID inexistente")
+    @DisplayName("Should throw EntityNotFoundException when try to search by ID unexistent user")
     void testGetUserById_Failure_NotFound() {
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -116,7 +116,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Deve atualizar o usuário com sucesso")
+    @DisplayName("Should update with success")
     void testUpdateUser_Success() {
         User existingUser = new User(new UserRegistrationDTO("Pedro", "pedro@email.com", "senha", Role.ADMIN), passwordEncoder);
         var updateDTO = new UserUpdateDTO("Pedro Atualizado", "novasenha", "TECHNICIAN");
@@ -135,7 +135,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar InactiveUserException ao atualizar usuário inativo")
+    @DisplayName("Should throw InactiveUserException when update an inactive user")
     void testUpdateUser_Failure_Inactive() {
         User existingUser = new User(new UserRegistrationDTO("Pedro", "pedro@email.com", "senha", Role.ADMIN), passwordEncoder);
         existingUser.deactivate();
@@ -150,7 +150,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Deve deletar logicamente o usuário com sucesso")
+    @DisplayName("Should make a soft user delete")
     void testDeleteUser_Success() {
         User existingUser = new User(new UserRegistrationDTO("Pedro", "pedro@email.com", "senha", Role.ADMIN), passwordEncoder);
         
@@ -164,7 +164,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar InactiveUserException ao tentar deletar um usuário já inativo")
+    @DisplayName("Should throw InactiveUserException when trying to delete an already inactive user")
     void testDeleteUser_Failure_Inactive() {
         User existingUser = new User(new UserRegistrationDTO("Pedro", "pedro@email.com", "senha", Role.ADMIN), passwordEncoder);
         existingUser.deactivate();
@@ -179,7 +179,7 @@ class UserServiceTest {
 
 
     @Test
-    @DisplayName("Deve retornar uma página de usuários filtrados por role")
+    @DisplayName("Should return a page of users filtered by role")
     void testGetAllUsers_WithRole_Success() {
         User user = new User(new UserRegistrationDTO("Admin", "admin@email.com", "senha", Role.ADMIN), passwordEncoder);
         Page<User> page = new PageImpl<>(List.of(user));
