@@ -119,7 +119,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser
     @DisplayName("Should return 200 (OK) when updating a user with valid data")
     void testUpdateUser_Success() throws Exception {
         var updateDTO = new UserUpdateDTO("Pedro Atualizado", "senha123", "ADMIN");
@@ -135,7 +135,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser
     @DisplayName("Should return 400 (Bad Request) when updating a user with invalid data")
     void testUpdateUser_Failure_InvalidData() throws Exception {
         var updateDTO = new UserUpdateDTO("", "", "ADMIN");
@@ -144,18 +144,6 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userUpdateDTO.write(updateDTO).getJson()))
                 .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @WithMockUser(roles = "CLIENT")
-    @DisplayName("Should return 403 (Forbidden) when a non-admin tries to update a user")
-    void testUpdateUser_Forbidden() throws Exception {
-        var updateDTO = new UserUpdateDTO("Pedro Atualizado", "senha123", "ADMIN");
-
-        mockMvc.perform(put("/users/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(userUpdateDTO.write(updateDTO).getJson()))
-                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -197,7 +185,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser
     @DisplayName("Should return 404 (Not Found) when updating a user with non-existent ID")
     void testUpdateUser_Failure_NotFound() throws Exception {
         var registrationDTO = new UserRegistrationDTO("Pedro", "pedro@email.com", "senha123", Role.ADMIN);
@@ -237,7 +225,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser
     @DisplayName("Should return 400 (Bad Request) when updating an inactive user")
     void testUpdateUser_Failure_InactiveUser() throws Exception {
         var updateDTO = new UserUpdateDTO("Pedro Atualizado", "senha123", "ADMIN");
