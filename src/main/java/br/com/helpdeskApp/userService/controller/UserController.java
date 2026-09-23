@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 import jakarta.validation.Valid;
@@ -43,10 +44,9 @@ public class UserController {
         return ResponseEntity.created(uri).body(createdUser);
     }
 
-    @PreAuthorize (value = "hasRole('ADMIN')")
     @GetMapping 
-    public ResponseEntity<Page<UserListDTO>> getAllUsers(@PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable) {
-        var users = userService.getAllUsers(pageable);
+    public ResponseEntity<Page<UserListDTO>> getAllUsers(@RequestParam(required = false) String role, @PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable) {
+        var users = userService.getAllUsers(role, pageable);
         return ResponseEntity.ok(users);
     }
 
@@ -54,12 +54,6 @@ public class UserController {
     public ResponseEntity<UserDetailsDTO> getUserById(@PathVariable Long id) {
         var user = userService.getUserById(id);
         return ResponseEntity.ok(user);
-    }
-
-    @GetMapping ("/technicians")
-    public ResponseEntity<Page<UserListDTO>> getTechnicians(@PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable) {
-        var technicians = userService.getTechnicians(pageable);
-        return ResponseEntity.ok(technicians);
     }
 
     @PreAuthorize (value = "hasRole('ADMIN')")

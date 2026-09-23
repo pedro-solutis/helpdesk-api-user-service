@@ -35,7 +35,11 @@ public class UserService {
         return new UserDetailsDTO(newUser);
     }
 
-    public Page<UserListDTO> getAllUsers(Pageable pageable) {
+    public Page<UserListDTO> getAllUsers(String role, Pageable pageable) {
+        if (role != null){
+            var users = userRepository.getAllByRole(Role.valueOf(role.toUpperCase()), pageable);
+            return users.map(UserListDTO::new);
+        }
         var users = userRepository.findAllByActiveTrue(pageable);
         return users.map(UserListDTO::new);
     }
@@ -43,11 +47,6 @@ public class UserService {
     public UserDetailsDTO getUserById(Long id) {
         var user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
         return new UserDetailsDTO(user);
-    }
-
-    public Page<UserListDTO> getTechnicians(Pageable pageable) {
-        var technicians = userRepository.getAllByRoleEquals(Role.TECHNICIAN, pageable);
-        return technicians.map(UserListDTO::new);
     }
 
     public UserDetailsDTO updateUser(Long id, UserUpdateDTO user) {
