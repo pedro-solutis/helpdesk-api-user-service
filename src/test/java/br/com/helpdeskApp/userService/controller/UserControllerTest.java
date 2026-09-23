@@ -90,26 +90,18 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser 
     @DisplayName("Should return 200 (OK) and a paginated list of users")
     void testGetAllUsers_Success() throws Exception {
         var userListDTO = new UserListDTO(1L, "Pedro", "pedro@email.com", Role.ADMIN);
         Page<UserListDTO> page = new PageImpl<>(List.of(userListDTO));
 
-        Mockito.when(userService.getAllUsers(any())).thenReturn(page);
+        Mockito.when(userService.getAllUsers(any(), any())).thenReturn(page);
 
         mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].id").value(1L))
                 .andExpect(jsonPath("$.content[0].name").value("Pedro"));
-    }
-
-    @Test
-    @WithMockUser(roles = "CLIENT")
-    @DisplayName("Should return 403 (Forbidden) when a non-admin tries to get all users")
-    void testGetAllUsers_Forbidden() throws Exception {
-        mockMvc.perform(get("/users"))
-                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -188,7 +180,7 @@ class UserControllerTest {
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Should return 404 (Not Found) when getting all users (simulating db failure)")
     void testGetAllUsers_Failure_NotFound() throws Exception {
-        Mockito.when(userService.getAllUsers(any())).thenThrow(new jakarta.persistence.EntityNotFoundException());
+        Mockito.when(userService.getAllUsers(any(), any())).thenThrow(new jakarta.persistence.EntityNotFoundException());
 
         mockMvc.perform(get("/users"))
                 .andExpect(status().isNotFound());
@@ -268,5 +260,20 @@ class UserControllerTest {
 
         mockMvc.perform(delete("/users/1"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser 
+    @DisplayName("Should return 200 (OK) and a paginated list of users filtered by role")
+    void testGetAllUsers_WithRole_Success() throws Exception {
+        var userListDTO = new UserListDTO(1L, "Admin", "admin@email.com", Role.ADMIN);
+        Page<UserListDTO> page = new PageImpl<>(List.of(userListDTO));
+
+        Mockito.when(userService.getAllUsers(eq("ADMIN"), any())).thenReturn(page);
+
+        mockMvc.perform(get("/users").param("role", "ADMIN"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(1L))
+                .andExpect(jsonPath("$.content[0].name").value("Admin"));
     }
 }

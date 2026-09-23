@@ -84,7 +84,7 @@ class UserServiceTest {
 
         when(userRepository.findAllByActiveTrue(pageable)).thenReturn(page);
 
-        Page<UserListDTO> result = userService.getAllUsers(pageable);
+        Page<UserListDTO> result = userService.getAllUsers(null,pageable);
 
         assertNotNull(result);
         assertEquals(1, result.getContent().size());
@@ -175,6 +175,24 @@ class UserServiceTest {
 
         verify(userRepository, times(1)).findById(1L);
         verify(userRepository, never()).save(any(User.class));
+    }
+
+
+    @Test
+    @DisplayName("Deve retornar uma página de usuários filtrados por role")
+    void testGetAllUsers_WithRole_Success() {
+        User user = new User(new UserRegistrationDTO("Admin", "admin@email.com", "senha", Role.ADMIN), passwordEncoder);
+        Page<User> page = new PageImpl<>(List.of(user));
+        Pageable pageable = PageRequest.of(0, 10);
+
+        when(userRepository.getAllByRole(Role.ADMIN, pageable)).thenReturn(page);
+
+        Page<UserListDTO> result = userService.getAllUsers("ADMIN", pageable);
+
+        assertNotNull(result);
+        assertEquals(1, result.getContent().size());
+        assertEquals("Admin", result.getContent().get(0).name());
+        verify(userRepository, times(1)).getAllByRole(Role.ADMIN, pageable);
     }
 }
 
