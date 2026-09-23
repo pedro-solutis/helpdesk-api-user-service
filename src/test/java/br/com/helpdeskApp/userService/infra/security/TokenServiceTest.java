@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import br.com.helpdeskApp.userService.model.Role;
 import br.com.helpdeskApp.userService.model.User;
 
 class TokenServiceTest {
@@ -29,6 +30,7 @@ class TokenServiceTest {
         User user = mock(User.class);
         when(user.getEmail()).thenReturn("pedro@email.com");
         when(user.getId()).thenReturn(1L);
+        when(user.getRole()).thenReturn(Role.ADMIN);
 
         String token = tokenService.generateToken(user);
 
@@ -53,6 +55,7 @@ class TokenServiceTest {
         User user = mock(User.class);
         when(user.getEmail()).thenReturn("pedro@email.com");
         when(user.getId()).thenReturn(1L);
+        when(user.getRole()).thenReturn(Role.ADMIN);
 
         String token = tokenService.generateToken(user);
 
