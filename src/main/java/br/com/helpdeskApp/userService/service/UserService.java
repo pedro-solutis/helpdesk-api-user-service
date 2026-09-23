@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import br.com.helpdeskApp.userService.model.Role;
 import br.com.helpdeskApp.userService.model.User;
 import br.com.helpdeskApp.userService.dto.UserDetailsDTO;
 import br.com.helpdeskApp.userService.dto.UserListDTO;
@@ -37,7 +36,7 @@ public class UserService {
 
     public Page<UserListDTO> getAllUsers(String name, String email, String role, Pageable pageable) {
         if (name!=null || email != null || role != null){
-            var users = userRepository.getAllFilter(name, email, Role.valueOf(role.toUpperCase()), pageable);
+            var users = userRepository.getAllFilter(name, email, role.toUpperCase(), pageable);
             return users.map(UserListDTO::new);
         }
         var users = userRepository.findAllByActiveTrue(pageable);
