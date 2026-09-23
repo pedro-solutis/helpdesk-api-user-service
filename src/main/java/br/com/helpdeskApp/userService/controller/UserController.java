@@ -56,7 +56,6 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PreAuthorize (value = "hasRole('ADMIN')")
     @PutMapping ("/{id}")
     @Transactional 
     public ResponseEntity<UserDetailsDTO> updateUser(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO user) {
