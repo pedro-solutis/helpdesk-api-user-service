@@ -56,10 +56,10 @@ public class UserController {
     @GetMapping 
     public ResponseEntity<Page<UserListDTO>> getAllUsers(
             @Parameter(description = "Optional filter by name")@RequestParam (required = false) String name,
-            @Parameter(description = "Optional filter by role (e.g., ADMIN, TECHNICIAN, CLIENT)") @RequestParam(required = false) String role,
-            @Parameter(description = "Optional filter by emal")@RequestParam (required = false) String email, 
+            @Parameter(description = "Optional filter by emal")@RequestParam (required = false) String email,
+            @Parameter(description = "Optional filter by role (e.g., ADMIN, TECHNICIAN, CLIENT)") @RequestParam(required = false) String role, 
             @Parameter(hidden = true) @PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable) {
-        var users = userService.getAllUsers(role, pageable);
+        var users = userService.getAllUsers(name, email, role, pageable);
         return ResponseEntity.ok(users);
     }
 

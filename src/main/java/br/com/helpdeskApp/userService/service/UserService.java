@@ -35,9 +35,9 @@ public class UserService {
         return new UserDetailsDTO(newUser);
     }
 
-    public Page<UserListDTO> getAllUsers(String role, Pageable pageable) {
-        if (role != null){
-            var users = userRepository.getAllByRole(Role.valueOf(role.toUpperCase()), pageable);
+    public Page<UserListDTO> getAllUsers(String name, String email, String role, Pageable pageable) {
+        if (name!=null || email != null || role != null){
+            var users = userRepository.getAllFilter(name, email, Role.valueOf(role.toUpperCase()), pageable);
             return users.map(UserListDTO::new);
         }
         var users = userRepository.findAllByActiveTrue(pageable);

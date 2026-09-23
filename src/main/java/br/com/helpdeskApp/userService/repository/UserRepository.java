@@ -3,6 +3,7 @@ package br.com.helpdeskApp.userService.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import br.com.helpdeskApp.userService.model.Role;
@@ -14,9 +15,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     UserDetails findByEmail(String username);
 
-    boolean existsByEmail(
-            String email);
+    boolean existsByEmail(String email);
 
-    Page<User> getAllByRole(Role role, Pageable pageable);
+    @Query (
+        value = 
+        "select u from User u where " +
+        "(:name is null or u.name like %:name%) AND " +
+        "(:email is null or u.email = :email) AND " +
+        "(:role is null or u.role = :role) ", 
+        nativeQuery = true
+    )
+    Page<User> getAllFilter(String name, String email, Role role, Pageable pageable);
 
 }
