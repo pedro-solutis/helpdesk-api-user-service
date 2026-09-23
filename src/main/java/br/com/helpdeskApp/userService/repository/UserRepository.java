@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import br.com.helpdeskApp.userService.model.Role;
 import br.com.helpdeskApp.userService.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -15,5 +16,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(
             String email);
+
+    Page<User> getAllByRoleEquals(Role technician, Pageable pageable);
 
 }

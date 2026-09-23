@@ -56,6 +56,12 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping ("/technicians")
+    public ResponseEntity<Page<UserListDTO>> getTechnicians(@PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable) {
+        var technicians = userService.getTechnicians(pageable);
+        return ResponseEntity.ok(technicians);
+    }
+
     @PreAuthorize (value = "hasRole('ADMIN')")
     @PutMapping ("/{id}")
     @Transactional 

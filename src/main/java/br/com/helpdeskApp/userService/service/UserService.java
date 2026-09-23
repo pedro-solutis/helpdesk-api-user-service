@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import br.com.helpdeskApp.userService.model.Role;
 import br.com.helpdeskApp.userService.model.User;
 import br.com.helpdeskApp.userService.dto.UserDetailsDTO;
 import br.com.helpdeskApp.userService.dto.UserListDTO;
@@ -42,6 +43,11 @@ public class UserService {
     public UserDetailsDTO getUserById(Long id) {
         var user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
         return new UserDetailsDTO(user);
+    }
+
+    public Page<UserListDTO> getTechnicians(Pageable pageable) {
+        var technicians = userRepository.getAllByRoleEquals(Role.TECHNICIAN, pageable);
+        return technicians.map(UserListDTO::new);
     }
 
     public UserDetailsDTO updateUser(Long id, UserUpdateDTO user) {
