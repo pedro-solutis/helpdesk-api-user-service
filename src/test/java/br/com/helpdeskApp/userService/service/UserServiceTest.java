@@ -84,7 +84,7 @@ class UserServiceTest {
 
         when(userRepository.findAllByActiveTrue(pageable)).thenReturn(page);
 
-        Page<UserListDTO> result = userService.getAllUsers(null,pageable);
+        Page<UserListDTO> result = userService.getAllUsers(null,null, null, pageable);
 
         assertNotNull(result);
         assertEquals(1, result.getContent().size());
@@ -185,14 +185,14 @@ class UserServiceTest {
         Page<User> page = new PageImpl<>(List.of(user));
         Pageable pageable = PageRequest.of(0, 10);
 
-        when(userRepository.getAllByRole(Role.ADMIN, pageable)).thenReturn(page);
+        when(userRepository.getAllFilter(null, null, "ADMIN", pageable)).thenReturn(page);
 
-        Page<UserListDTO> result = userService.getAllUsers("ADMIN", pageable);
+        Page<UserListDTO> result = userService.getAllUsers(null, null, "ADMIN", pageable);
 
         assertNotNull(result);
         assertEquals(1, result.getContent().size());
         assertEquals("Admin", result.getContent().get(0).name());
-        verify(userRepository, times(1)).getAllByRole(Role.ADMIN, pageable);
+        verify(userRepository, times(1)).getAllFilter(null, null, "ADMIN", pageable);
     }
 }
 

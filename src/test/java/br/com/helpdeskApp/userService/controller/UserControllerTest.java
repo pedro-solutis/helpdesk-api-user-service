@@ -96,7 +96,7 @@ class UserControllerTest {
         var userListDTO = new UserListDTO(1L, "Pedro", "pedro@email.com", Role.ADMIN);
         Page<UserListDTO> page = new PageImpl<>(List.of(userListDTO));
 
-        Mockito.when(userService.getAllUsers(any(), any())).thenReturn(page);
+        Mockito.when(userService.getAllUsers(any(), any(), any(), any())).thenReturn(page);
 
         mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
@@ -168,7 +168,7 @@ class UserControllerTest {
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Should return 404 (Not Found) when getting all users (simulating db failure)")
     void testGetAllUsers_Failure_NotFound() throws Exception {
-        Mockito.when(userService.getAllUsers(any(), any())).thenThrow(new jakarta.persistence.EntityNotFoundException());
+        Mockito.when(userService.getAllUsers(any(), any(), any(), any())).thenThrow(new jakarta.persistence.EntityNotFoundException());
 
         mockMvc.perform(get("/users"))
                 .andExpect(status().isNotFound());
@@ -257,7 +257,7 @@ class UserControllerTest {
         var userListDTO = new UserListDTO(1L, "Admin", "admin@email.com", Role.ADMIN);
         Page<UserListDTO> page = new PageImpl<>(List.of(userListDTO));
 
-        Mockito.when(userService.getAllUsers(eq("ADMIN"), any())).thenReturn(page);
+        Mockito.when(userService.getAllUsers(eq(null), eq(null), eq("ADMIN"), any())).thenReturn(page);
 
         mockMvc.perform(get("/users").param("role", "ADMIN"))
                 .andExpect(status().isOk())
