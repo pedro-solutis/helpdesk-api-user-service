@@ -19,9 +19,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query (
         value = 
         "SELECT * FROM users u WHERE " +
-        "(:name IS NULL OR u.name ILIKE :name) AND " +
+        "(:name IS NULL OR u.name ILIKE %:name%) AND " +
         "(:email IS NULL OR u.email = :email) AND " +
-        "(:role IS NULL OR u.role = :role) AND " +
+        "(:role IS NULL OR u.role ILIKE :role) AND " +
         "(u.active = TRUE)",
         nativeQuery = true
     )
