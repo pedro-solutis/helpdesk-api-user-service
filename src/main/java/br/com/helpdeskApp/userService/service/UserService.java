@@ -35,11 +35,11 @@ public class UserService {
     }
 
     public Page<UserListDTO> getAllUsers(String name, String email, String role, Pageable pageable) {
-        if (name!=null || email != null || role != null){
-            var users = userRepository.getAllFilter(name, email, role.toUpperCase(), pageable);
-            return users.map(UserListDTO::new);
-        }
-        var users = userRepository.findAllByActiveTrue(pageable);
+        var users = userRepository.getAllFilter(
+            name != null ? name : null,
+            email != null ? email : null,
+            role != null ? role : null, 
+            pageable);
         return users.map(UserListDTO::new);
     }
 
