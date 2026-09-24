@@ -5,9 +5,9 @@ spring:
   application:
     name: userService
   datasource:
-    url: ${POSTGRES_DB:jdbc:postgresql://localhost:5432/user_db}
-    username: ${POSTGRES_USER:postgres}
-    password: ${POSTGRES_PASSWORD:postgres}
+    url: ${POSTGRES_DB:jdbc:postgresql://localhost:5432/users_db}
+    username: ${POSTGRES_USER:root}
+    password: ${POSTGRES_PASSWORD:root}
     driver-class-name: ${DATASOURCE_DRIVER:org.postgresql.Driver}
   jpa:
     show-sql: true
@@ -22,8 +22,3 @@ api:
     token:
       secret: ${JWT_SECRET:mySuperSecretKey123!}
       issuer: ${JWT_ISSUER:user-service}
-    
-
-springdoc:
-  servers:
-    - url: ${GATEWAY_URL:http://localhost:8080/api}
